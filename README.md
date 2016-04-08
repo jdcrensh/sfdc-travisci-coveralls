@@ -1,5 +1,7 @@
 # sfdc-travisci-coveralls
 
+[![npm version](https://img.shields.io/npm/v/sfdc-travisci-coveralls.svg?style=flat-square)](https://www.npmjs.com/package/sfdc-travisci-coveralls)
+
 Runs a project's Apex tests in TravisCI then posts their coverage results to Coveralls.
 
 ## Install
