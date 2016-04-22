@@ -1,7 +1,7 @@
 # sfdc-travisci-coveralls
 
 [![npm version](https://img.shields.io/npm/v/sfdc-travisci-coveralls.svg)](https://www.npmjs.com/package/sfdc-travisci-coveralls)
-[![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
+[![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip)
 
 Runs a project's Apex tests in TravisCI then reports overall coverage results to Coveralls.
 
@@ -32,13 +32,32 @@ In the project's TravisCI configuration, you'll need to add some environment var
 * `SFDC_SFDC_TOKEN`
 * `COVERALLS_REPO_TOKEN` (found on the project's Coveralls page)
 
-Create `index.js` and `.travis.yml` files in the root of your project, and commit.
+Create `build.js` and `.travis.yml` files in the root of your project. Edit your `package.json` and update the "test"
+script to run `node build`. Commit.
 
 When pushed, TravisCI should immediately start running tests, which will post coverage to Coveralls!
 
 ## Example
 
-`index.js`
+`package.json`
+```json
+{
+  "name": "my-project",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "repository": "jsmith/my-project",
+  "scripts": {
+    "test": "node build"
+  },
+  "description": "My Salesforce project",
+  "dependencies": {
+    "sfdc-travisci-coveralls": "^0.0.3"
+  }
+}
+```
+
+`build.js`
 
 ```javascript
 var runTests = require('sfdc-travisci-coveralls');
