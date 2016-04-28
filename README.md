@@ -18,6 +18,10 @@ it to be built. When commits are pushed, it will automatically be built.
 
 ## Setup
 
+Here is a working sample project you can use as a template:
+[sample-apex-library](https://github.com/redteal/sample-apex-library). If you use the sample, you'll
+only need to hook up TravisCI and Coveralls to your repository.
+
 ### File structure
 
 File structure is standard; `src` folder in root directory and a valid `package.xml`
