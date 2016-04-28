@@ -7,6 +7,7 @@ const rest = require('restler');
 const temp = require('temp').track();
 const path = require('path');
 const glob = require('glob');
+const chalk = require('chalk');
 
 let conn;
 let conf;
@@ -47,7 +48,6 @@ const deploy = (done) => {
     done(err);
   });
 };
-
 /**
 * Builds a map of class id to class data
 */
@@ -64,7 +64,7 @@ const buildClassIdToClassDataMap = (done) => {
     // filter org classes by classes in the current project
     data = data.filter(row => _.includes(projectClassNames, row.Name));
     data.forEach((row) => {
-      if (row.Body.indexOf('@isTest') === -1) {
+      if (!row.Body.match(/(@isTest|testMethod)/i)) {
         classMap[row.Id] = {
           name: pathTemplate(row),
           source: row.Body,
@@ -91,6 +91,12 @@ const runAllTests = (done) => {
   conn.tooling.runTestsAsynchronous(classIds, done);
 };
 
+const testMethodOutcomes = {
+  Pass: chalk.green('✓'),
+  Fail: chalk.red('✗'),
+  Skip: chalk.gray('⤼')
+};
+
 /**
 * Query the test results
 *
@@ -100,22 +106,60 @@ const runAllTests = (done) => {
 const queryTestResults = (testRunId, done) => {
   console.log('Waiting for tests');
 
-  var queryStr = `SELECT Id,Status,ApexClassId,ExtendedStatus FROM ApexTestQueueItem ` +
-                 `WHERE ParentJobId = '${testRunId}'`;
-  conn.query(queryStr, (err, data) => {
+  conn.sobject('ApexTestQueueItem').find({
+    ParentJobId: {$eq: testRunId}
+  }).execute((err, queueItems) => {
     if (err) {
       return done(err);
     }
-    if (!_.some(data.records, row => row.Status === 'Queued' || row.Status === 'Processing')) {
-      data.records.forEach((row) => {
-        console.log(`[${row.Status} ${row.ExtendedStatus}] ${testClassMap[row.ApexClassId].name}`);
-      });
-      if (_.some(data.records, row => row.Status === 'Failed')) {
-        err = 'Failed';
-      }
-      return done(err, data);
+    if (_.some(queueItems, row => row.Status === 'Queued' || row.Status === 'Processing')) {
+      return setTimeout(() => queryTestResults(testRunId, done), 5000);
     }
-    setTimeout(() => queryTestResults(testRunId, done), 5000);
+    queueItems = _.keyBy(queueItems, item => path.basename(testClassMap[item.ApexClassId].name, '.cls'));
+
+    conn.sobject('ApexTestResult').find({
+      AsyncApexJobId: {$eq: testRunId}
+    }).execute((err, testResults) => {
+      if (err) {
+        return done(err);
+      }
+      const resultsByTestClass = _
+        .chain(testResults)
+        .groupBy('ApexClassId')
+        .mapKeys((v, k) => path.basename(testClassMap[k].name, '.cls'))
+        .mapValues(arr => _.sortBy(arr, 'MethodName'))
+        .value();
+
+      const statuses = {};
+      _.forEach(resultsByTestClass, (rows, className) => {
+        console.log(`\n\t${className} ${queueItems[className].ExtendedStatus}`);
+        rows.forEach((row) => {
+          if (row.Outcome === 'CompileFail') {
+            row.Outcome = 'Fail';
+          }
+          if (statuses[row.Outcome] == null) {
+            statuses[row.Outcome] = 0;
+          }
+          statuses[row.Outcome]++;
+
+          const icon = testMethodOutcomes[row.Outcome];
+          console.log('\t\t' + icon + ' ' + chalk.gray(row.MethodName));
+          if (row.Message) {
+            console.log(row.Message.split('\n').map(ln => '\t\t\t' + ln).join('\n'));
+          }
+          if (row.StackTrace) {
+            console.log(row.StackTrace.split('\n').map(ln => '\t\t\t' + ln).join('\n'));
+          }
+        });
+      });
+      console.log();
+      if (statuses.Fail) {
+        err = chalk.red(`There were ${statuses.Fail} failing tests`);
+      } else {
+        console.log(chalk.green(`All ${statuses.Pass} tests passed!`));
+      }
+      done(err, testResults);
+    });
   });
 };
 
