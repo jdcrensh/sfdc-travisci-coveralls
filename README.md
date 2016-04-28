@@ -12,34 +12,28 @@ it to be built. When commits are pushed, it will automatically be built.
 
 * Node.js
 * Git
-* Account at [TravisCI](https://travis-ci.org/)
-* Account at [Coveralls](https://coveralls.io/)
+* Account at [TravisCI](https://travis-ci.org)
+* Account at [Coveralls](https://coveralls.io)
 
 
 ## Setup
 
-Run `npm init` in your project's directory if `package.json` does not exist, then:
+### File structure
 
+File structure is standard; `src` folder in root directory and a valid `package.xml`
+file under it referencing the metadata in the package.
+
+### Node
+
+If `package.json` does not exist, run `npm init` in your project's directory. When prompted
+for a test command, enter `sfdc-travisci-coveralls`.
+
+Once initialized, install:
 ```bash
-npm i -S sfdc-travisci-coveralls
+npm i -D sfdc-travisci-coveralls
 ```
 
-In the project's TravisCI configuration, you'll need to add some environment variables to pass to `runTests()`:
-
-* `SFDC_LOGINURL`
-* `SFDC_USERNAME`
-* `SFDC_PASSWORD`
-* `SFDC_SFDC_TOKEN`
-* `COVERALLS_REPO_TOKEN` (found on the project's Coveralls page)
-
-Create `build.js` and `.travis.yml` files in the root of your project. Edit your `package.json` and update the "test"
-script to run `node build`. Commit.
-
-When pushed, TravisCI should immediately start running tests, which will post coverage to Coveralls!
-
-## Example
-
-`package.json`
+Example `package.json`
 ```json
 {
   "name": "my-project",
@@ -48,42 +42,39 @@ When pushed, TravisCI should immediately start running tests, which will post co
   "license": "MIT",
   "repository": "jsmith/my-project",
   "scripts": {
-    "test": "node build"
+    "test": "sfdc-travisci-coveralls"
   },
-  "description": "My Salesforce project",
-  "dependencies": {
-    "sfdc-travisci-coveralls": "^0.0.3"
+  "description": "My Salesforce Project",
+  "devDependencies": {
+    "sfdc-travisci-coveralls": "^0.1.0"
   }
 }
 ```
 
-`build.js`
+You may also want to put `node_modules` in your `.gitignore` file.
 
-```javascript
-var runTests = require('sfdc-travisci-coveralls');
+### TravisCI
 
-runTests({
-	loginUrl: process.env.SFDC_LOGINURL,
-	username: process.env.SFDC_USERNAME,
-	password: process.env.SFDC_PASSWORD,
-	securityToken: process.env.SFDC_TOKEN,
-	travisJobId: process.env.TRAVIS_JOB_ID,
-	coverallsRepoToken: process.env.COVERALLS_REPO_TOKEN
-}, function (err) {
-	console.error(err);
-}, function (data) {
-	console.log('done.');
-});
+In the project's TravisCI configuration, you'll need to add some environment variables:
 
-```
+* `SFDC_LOGINURL`
+* `SFDC_USERNAME`
+* `SFDC_PASSWORD`
+* `SFDC_SFDC_TOKEN`
+* `COVERALLS_REPO_TOKEN` (found on the project's Coveralls page)
+
+Create a `.travis.yml` file in the root of your project. Example:
 
 `.travis.yml` ([docs](https://docs.travis-ci.com/user/languages/javascript-with-nodejs))
 
 ```yaml
 language: node_js
 node_js: "node"
-sudo: false
-branches:
-    only:
-        - master
+git: depth: 1
 ```
+
+### Commit/push
+
+Commit the new files.
+
+When pushed, TravisCI should immediately start running tests, which will post coverage to Coveralls!

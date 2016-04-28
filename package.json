@@ -1,18 +1,28 @@
 {
   "name": "sfdc-travisci-coveralls",
   "version": "0.0.4",
-  "license": "ISC",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/jdcrensh/sfdc-travisci-coveralls.git"
+  "license": "MIT",
+  "repository": "jdcrensh/sfdc-travisci-coveralls",
+  "description": "Runs a project's Apex tests in TravisCI then reports overall coverage results to Coveralls",
+  "enginesStrict": true,
+  "engines": {
+    "node": "^6.0.0"
   },
-  "description": "sfdc-travisci-coveralls",
+  "bin": {
+    "sfdc-travisci-coveralls": "./bin/build.js"
+  },
+  "main": "src/index.js",
   "dependencies": {
+    "archiver": "^1.0.0",
+    "async": "^2.0.0-rc.3",
+    "coveralls": "^2.11.9",
     "glob": "^7.0.3",
-    "jsforce": "^1.6.0",
+    "jsforce": "^1.6.1",
+    "jsforce-metadata-tools": "^1.2.2",
     "lodash": "^4.6.1",
-    "q": "^1.4.1",
     "restler": "^3.4.0",
-    "temp": "^0.8.3"
+    "stream-buffers": "^3.0.0",
+    "temp": "^0.8.3",
+    "winston": "^2.2.0"
   }
 }
