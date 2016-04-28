@@ -113,7 +113,7 @@ const queryTestResults = (testRunId, done) => {
       if (_.some(data.records, row => row.Status === 'Failed')) {
         err = 'Failed';
       }
-      return done(null, data);
+      return done(err, data);
     }
     setTimeout(() => queryTestResults(testRunId, done), 5000);
   });
@@ -197,7 +197,11 @@ module.exports.build = () => {
     travisJobId: process.env.TRAVIS_JOB_ID,
     coverallsRepoToken: process.env.COVERALLS_REPO_TOKEN,
     pollTimeout: 5 * 60 * 1000,
-    pollInterval: 5000
+    pollInterval: 5000,
+    rollbackOnError: true,
+    allowMissingFiles: false,
+    autoUpdatePackage: false,
+    ignoreWarnings: false
   };
   conn = new jsforce.Connection({loginUrl: conf.loginUrl});
   async.series([
