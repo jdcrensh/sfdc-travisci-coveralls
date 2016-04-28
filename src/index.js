@@ -195,7 +195,9 @@ module.exports.build = () => {
     password: process.env.SFDC_PASSWORD,
     securityToken: process.env.SFDC_TOKEN,
     travisJobId: process.env.TRAVIS_JOB_ID,
-    coverallsRepoToken: process.env.COVERALLS_REPO_TOKEN
+    coverallsRepoToken: process.env.COVERALLS_REPO_TOKEN,
+    pollTimeout: 5 * 60 * 1000,
+    pollInterval: 5000
   };
   conn = new jsforce.Connection({loginUrl: conf.loginUrl});
   async.series([
