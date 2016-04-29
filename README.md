@@ -35,7 +35,7 @@ A `.travis.yml` file will also be needed.
 
 ### TravisCI
 
-Create a ([`.travis.yml`](https://docs.travis-ci.com/user/languages/javascript-with-nodejs)) file at the root of
+Create a [`.travis.yml`](https://docs.travis-ci.com/user/languages/javascript-with-nodejs) file at the root of
 your project. Here's an example from [sample-apex-library](https://github.com/redteal/sample-apex-library):
 
 ```yaml
