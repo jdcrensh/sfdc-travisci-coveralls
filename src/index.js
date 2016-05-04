@@ -227,7 +227,14 @@ const postToCoveralls = (done) => {
         data: {
           json_file: rest.file(jsonPath, null, fs.statSync(jsonPath).size, null, 'application/json')
         }
-      }).on('complete', data => done());
+      }).on('complete', data => {
+        if (data.error) {
+          console.error('There was an error posting coverage.');
+          return done(data.message);
+        }
+        console.log('Coverage posted.');
+        done();
+      });
     });
   });
 };
