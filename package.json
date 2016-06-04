@@ -1,6 +1,6 @@
 {
   "name": "sfdc-travisci-coveralls",
-  "version": "0.2.2",
+  "version": "0.2.4",
   "license": "MIT",
   "repository": "redteal/sfdc-travisci-coveralls",
   "description": "Runs a Salesforce project's Apex tests in TravisCI then reports overall coverage results to Coveralls",
