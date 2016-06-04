@@ -3,7 +3,18 @@
   "version": "0.2.2",
   "license": "MIT",
   "repository": "redteal/sfdc-travisci-coveralls",
-  "description": "Runs a project's Apex tests in TravisCI then reports overall coverage results to Coveralls",
+  "description": "Runs a Salesforce project's Apex tests in TravisCI then reports overall coverage results to Coveralls",
+  "keywords": [
+    "salesforce",
+    "sfdc",
+    "sf",
+    "travis",
+    "travisci",
+    "ci",
+    "continuous integration",
+    "coveralls",
+    "coverage"
+  ],
   "enginesStrict": true,
   "engines": {
     "node": "^6.0.0"
