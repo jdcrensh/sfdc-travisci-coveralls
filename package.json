@@ -3,7 +3,8 @@
   "version": "0.2.5",
   "license": "MIT",
   "repository": "redteal/sfdc-travisci-coveralls",
-  "description": "Runs a Salesforce project's Apex tests in TravisCI then reports overall coverage results to Coveralls",
+  "description":
+    "Runs a Salesforce project's Apex tests in TravisCI then reports overall coverage results to Coveralls",
   "keywords": [
     "salesforce",
     "sfdc",
@@ -23,6 +24,13 @@
     "sfdc-travisci-coveralls": "./bin/build.js"
   },
   "main": "src/index.js",
+  "scripts": {
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.js": ["eslint --fix", "git add"],
+    "*.json": ["prettier --write", "git add"]
+  },
   "dependencies": {
     "archiver": "1.0.0",
     "async": "2.0.0-rc.3",
@@ -35,5 +43,14 @@
     "stream-buffers": "3.0.0",
     "temp": "0.8.3",
     "winston": "2.2.0"
+  },
+  "devDependencies": {
+    "eslint": "^3.19.0",
+    "eslint-config-prettier": "^2.2.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-prettier": "^2.1.2",
+    "husky": "^0.14.3",
+    "lint-staged": "^4.0.4",
+    "prettier": "^1.6.1"
   }
 }
